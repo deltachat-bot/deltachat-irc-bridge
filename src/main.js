@@ -147,7 +147,6 @@ const handleDCMessage = (chatId, msgId) => {
         DCsendMessage(chat, 'Bridging to IRC compromises the security of your verfied group, please remove this bot from the group!')
     } else {
         // listen to join command
-        // IDEA: send status message and 'anleitung'
         const joinRegex = /\/join ([#&][^\x07\x2C\s]{0,199})/
         const nickRegex = /\/nick (.{3,30})/
         if(message.getText().match(joinRegex)){
@@ -224,10 +223,5 @@ ircClient.on('message', (type, nick, to, text, _message)=>{
     const msg = `${nick}${type!=='MSG'?`:${type}`:''}: ${text}`
     DCsendMessage(dc.getChat(chatId), msg)
 })
-
-global.cha = channel
-
-global.irc = ircClient
-
 
 //TODO wait for config load to finish otherwise it might gets lost/overwritten
