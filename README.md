@@ -2,6 +2,7 @@
 
 > Disclaimer: This bot is in an early state and the code is kinda bad
 
+This bot can create DeltaChat groups for irc channels and bridges between group and irc channel. You can add people manualy or let them join over the bot.
 ## Usage
 
 1. create a `config.json` in the `./data` directory with following content: 
