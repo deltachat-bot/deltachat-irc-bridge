@@ -181,6 +181,7 @@ const handleDCMessage = (chatId, msgId) => {
     dc.markNoticedChat(chatId)
 }
 dc.on('DC_EVENT_MSGS_CHANGED', (chatId, msgId) => {
+    //handle initial message, that is normaly ignored, because it's a deaddrop 
     const message = dc.getMessage(msgId)
     if (message && message.isDeadDrop()) {
         handleDCMessage(dc.createChatByMessageId(msgId), msgId)
