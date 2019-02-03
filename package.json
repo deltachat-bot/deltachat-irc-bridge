@@ -1,0 +1,22 @@
+{
+  "name": "delta-irc-bridge",
+  "version": "1.0.0",
+  "description": "Bridge between IRC and DeltaChat/Email",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./src/main"
+  },
+  "keywords": [
+    "delta.chat",
+    "bot",
+    "irc"
+  ],
+  "author": "Simon Laux",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "deltachat-node": "0.39",
+    "irc-upd": "^0.10.0",
+    "md5": "^2.2.1"
+  }
+}

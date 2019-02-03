@@ -1,0 +1,8 @@
+node_modules
+db.sqlite-blobs
+data/channels.json
+data/nicknames.json
+data/config.json
+
+channels.json
+db.sqlite
