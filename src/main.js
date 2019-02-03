@@ -89,11 +89,11 @@ class IRCClient extends EventEmitter{
             stripColors:true,
         })
         this.client.on('registered', () => {
-            this.attachListeners()
             this.client.connect();
             this.joinChannels(channels)
             this.emit('ready')
         })
+        this.attachListeners()
     }
 
     joinChannels(channels){
@@ -206,18 +206,7 @@ dc.open(() => {
     }
 })
 
-const md5 = require('md5');
-
-// workaround to fix message duplication bug
-var lastMessage = "";
-
 ircClient.on('message', (type, nick, to, text, _message)=>{
-    const currentMesage = md5(type + nick + to + text)
-    if(lastMessage == currentMesage) {
-        console.count('Duplicated Message catched')
-        return
-    }
-    lastMessage = currentMesage
     const chatId = channel.getDCGroup(to)
     if(!chatId){return}
     const msg = `${nick}${type!=='MSG'?`:${type}`:''}: ${text}`

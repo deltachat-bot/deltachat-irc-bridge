@@ -16,7 +16,6 @@
   "license": "GPL-3.0",
   "dependencies": {
     "deltachat-node": "0.39",
-    "irc-upd": "^0.10.0",
-    "md5": "^2.2.1"
+    "irc-upd": "^0.10.0"
   }
 }
