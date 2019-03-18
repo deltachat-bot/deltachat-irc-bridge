@@ -2,130 +2,16 @@ const DeltaChat = require('deltachat-node')
 const C = require('deltachat-node/constants')
 const dc = new DeltaChat()
 
-const { readFileSync, writeFile } = require('fs')
-const { join } = require('path')
-
-const { EventEmitter } = require('events')
-
 // Config
-
 const { DC_Account, IRC_Connection } = require('../data/config.json')
-
 // ======
 
-// Channel
-const channel = {
-
-    channels: {},
-
-    loadChannels: function () {
-        try {
-            this.channels = require(join(__dirname, '..', 'data', 'channels.json'))
-        } catch (error) {
-            this.channels = {}
-        }
-    },
-    saveChannels: async function () {
-        writeFile(
-            join(__dirname, '..', 'data', 'channels.json'),
-            JSON.stringify(this.channels), () => { }
-        )
-    },
-    addChannel: function (ircChannelID, dcGroupID) {
-        console.log(ircChannelID, dcGroupID);
-
-        this.channels[ircChannelID] = dcGroupID
-        this.saveChannels()
-    },
-    getIRCChannel: function (dcGroupID) {
-        return Object.keys(this.channels).find(ircChannelID => this.channels[ircChannelID] === dcGroupID);
-    },
-    getDCGroup: function (ircChannelID) {
-        return this.channels[ircChannelID]
-    },
-}
-
-//Nicknames:
-
-const nicks = {
-    nicknames: {},
-    load: function () {
-        try {
-            this.nicknames = require(join(__dirname, '..', 'data', 'nicknames.json'))
-        } catch (error) {
-            this.nicknames = {}
-        }
-    },
-    save: function () {
-        writeFile(
-            join(__dirname, '..', 'data', 'nicknames.json'),
-            JSON.stringify(this.nicknames), () => { }
-        )
-    },
-    setNick: function (email, nickname) {
-        this.nicknames[email] = nickname
-        this.save()
-    },
-    getNick: function (email) {
-        return this.nicknames[email]
-    }
-}
+// Channel & nickname storage/managers
+const channel = require('./channels')()
+const nicks = require('./nicknames')()
 
 // IRC
-const irc = require('irc-upd');
-
-class IRCClient extends EventEmitter {
-    constructor(opt, channels) {
-        super()
-        this.pin = opt.password
-        this.client = new irc.Client(opt.server, opt.nick, {
-            userName: 'dc-irc',
-            realName: 'DeltaChat IRC bridge',
-            password: opt.password,
-            //secure:opt.secure,
-            autoRejoin: true,
-            encoding: 'utf-8',
-            //sasl:true,
-            stripColors: true,
-        })
-        this.client.on('registered', () => {
-            this.client.connect();
-            this.joinChannels(channels)
-            this.emit('ready')
-        })
-        this.attachListeners()
-    }
-
-    joinChannels(channels) {
-        channels.forEach((channel) => {
-            this.client.join(`${channel}`)
-        })
-    }
-
-    attachListeners() {
-        if(this.unsubscribe)this.unsubscribe()
-
-        const onMsg = (nick, to, text, message) => this.emit('message', 'MSG', nick, to, text, message)
-        const onNotice = (nick, to, text, message) => this.emit('message', 'NOTICE', nick, to, text, message)
-        const onAction = (nick, to, text, message) => this.emit('message', 'ACTION', nick, to, text, message)
-        const onError = function (message) { console.log('error: ', message); }
-        this.client.on('message#', onMsg)
-        this.client.on('notice', onNotice)
-        this.client.on('action', onAction)
-        this.client.on('error', onError)
-
-        this.unsubscribe = () => {
-            this.client.off('message#', onMsg)
-            this.client.off('notice', onNotice)
-            this.client.off('action', onAction)
-            this.client.off('error', onError)
-        }
-    }
-
-    sendMessage(channel, text) {
-        this.client.say(channel, text)
-    }
-}
+const IRCClient = require('./irc')
 /** @type {IRCClient} ircClient */
 var ircClient
 //DeltaChat
@@ -136,17 +22,13 @@ function DCsendMessage(chat, text) {
 
 //dc.on('ALL', console.log.bind(null,'core |'))
 
-function email2Nick(address) {
-    return nicks.getNick(address) || address.substring(0, address.indexOf("@"))
-}
-
 const handleDCMessage = (chatId, msgId) => {
     const chat = dc.getChat(chatId)
     const message = dc.getMessage(msgId)
     if (message.isInfo()) return;
     const sender = dc.getContact(message.getFromId())
     if (chat.getType() === C.DC_CHAT_TYPE_GROUP) {
-        const name = email2Nick(sender.getAddress())
+        const name = nicks.email2Nick(sender.getAddress())
         /* irc once ready send msg */
         const groupid = channel.getIRCChannel(message.getChatId())
         if (!groupid) { return }
