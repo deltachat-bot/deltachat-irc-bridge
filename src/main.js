@@ -78,7 +78,8 @@ const handleDCMessage = (chatId, msgId) => {
             DCsendMessage(chat,
                 `Help:\n` +
                 `please write '/join #channel' to join #channel on ${IRC_Connection.server}\n` +
-                `write /nick [new nickname (3-30 chars long)] to modify the name under which your messages appear on irc`
+                `write /nick [new nickname (3-30 chars long)] to modify the name under which your messages appear on irc\n`+
+                `Also you can use /names #channel and /topic #channel`
             )
         }
 

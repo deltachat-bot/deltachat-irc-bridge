@@ -31,3 +31,12 @@ data/config.json
 ## Using the Bot
 
 Message the Bot and it gives you its usage/help message.
+
+### Commands
+
+```
+/join #channel - join #channel
+/nick [newNick] - change your irc display name
+/names #channel - get online list of #channel
+/topic #channel - get motd/topic of #channel
+```
