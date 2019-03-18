@@ -32,7 +32,7 @@ const handleDCMessage = (chatId, msgId) => {
         /* irc once ready send msg */
         const groupid = channel.getIRCChannel(message.getChatId())
         if (!groupid) { return }
-        ircClient.sendMessage(groupid, `${name}: ${message.getText()}`)
+        ircClient.sendMessage(groupid, `${name}[dc]: ${message.getText()}`)
 
     } else if (chat.getType() === C.DC_CHAT_TYPE_VERIFIED_GROUP) {
         // send warning
