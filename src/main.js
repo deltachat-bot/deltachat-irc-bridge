@@ -103,12 +103,23 @@ class IRCClient extends EventEmitter {
     }
 
     attachListeners() {
-        this.client.on('message#', (nick, to, text, message) => this.emit('message', 'MSG', nick, to, text, message))
-        this.client.on('notice', (nick, to, text, message) => this.emit('message', 'NOTICE', nick, to, text, message))
-        this.client.on('action', (nick, to, text, message) => this.emit('message', 'ACTION', nick, to, text, message))
-        this.client.addListener('error', function (message) {
-            console.log('error: ', message);
-        });
+        if(this.unsubscribe)this.unsubscribe()
+
+        const onMsg = (nick, to, text, message) => this.emit('message', 'MSG', nick, to, text, message)
+        const onNotice = (nick, to, text, message) => this.emit('message', 'NOTICE', nick, to, text, message)
+        const onAction = (nick, to, text, message) => this.emit('message', 'ACTION', nick, to, text, message)
+        const onError = function (message) { console.log('error: ', message); }
+        this.client.on('message#', onMsg)
+        this.client.on('notice', onNotice)
+        this.client.on('action', onAction)
+        this.client.on('error', onError)
+
+        this.unsubscribe = () => {
+            this.client.off('message#', onMsg)
+            this.client.off('notice', onNotice)
+            this.client.off('action', onAction)
+            this.client.off('error', onError)
+        }
     }
 
     sendMessage(channel, text) {
