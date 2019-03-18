@@ -15,6 +15,11 @@ class IRCClient extends EventEmitter {
             //sasl:true,
             stripColors: true,
         })
+        this.onlineUsers = {}
+        this.client.on('names', (channel, rawUsers)=>{
+            const users = Object.keys(rawUsers).map((nick)=>`${rawUsers[nick]}${nick}`) || Object.keys(rawUsers)
+            this.onlineUsers[channel] = users.sort((a, b)=> a.toLowerCase().codePointAt(0) - b.toLowerCase().codePointAt(0) )
+        })
         this.client.on('registered', () => {
             this.client.connect();
             this.joinChannels(channels)
@@ -51,6 +56,10 @@ class IRCClient extends EventEmitter {
 
     sendMessage(channel, text) {
         this.client.say(channel, text)
+    }
+
+    getOnlineUsersForChannel(channel){
+        return this.onlineUsers[channel]
     }
 }
 module.exports = IRCClient

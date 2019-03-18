@@ -41,6 +41,7 @@ const handleDCMessage = (chatId, msgId) => {
         // listen to join command
         const joinRegex = /\/join ([#&][^\x07\x2C\s]{0,199})/
         const nickRegex = /\/nick (.{3,30})/
+        const namesRegex = /\/names ([#&][^\x07\x2C\s]{0,199})/
         if (message.getText().match(joinRegex)) {
             const channelID = joinRegex.exec(message.getText())[1]
             var groupId = channel.getDCGroup(channelID)
@@ -62,6 +63,10 @@ const handleDCMessage = (chatId, msgId) => {
             const currentNick = `${nicks.getNick(email)}`
             nicks.setNick(email, newNick)
             DCsendMessage(chat, `Changed your display name from ${currentNick} to ${nicks.getNick(email)}. (only applies to new msgs)`)
+        } else if (message.getText().match(namesRegex)) {
+            const channelID = namesRegex.exec(message.getText())[1]
+            const users = ircClient.getOnlineUsersForChannel(channelID)
+            DCsendMessage(chat, `There are currently ${users.length} users connected to ${channelID}:\n${users.join(', ')}`)
         } else {
             DCsendMessage(chat,
                 `Help:\n` +
