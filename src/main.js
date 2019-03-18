@@ -25,7 +25,7 @@ function DCsendMessage(chat, text) {
 const handleDCMessage = (chatId, msgId) => {
     const chat = dc.getChat(chatId)
     const message = dc.getMessage(msgId)
-    if (message.isInfo()) return;
+    if (!message || message.isInfo()) return;
     const sender = dc.getContact(message.getFromId())
     if (chat.getType() === C.DC_CHAT_TYPE_GROUP) {
         const name = nicks.email2Nick(sender.getAddress())
@@ -56,9 +56,11 @@ const handleDCMessage = (chatId, msgId) => {
             }
             if (!dc.isContactInChat(groupId, sender.getId())) {
                 dc.addContactToChat(groupId, sender.getId())
-                const users = ircClient.getOnlineUsersForChannel(channelID)
+                const users = ircClient.getOnlineUsersForChannel(channelID) || []
                 const topic = ircClient.getTopicForChannel(channelID)
-                DCsendMessage(chat, `Joined group '${channelID} on freenode'\nTopic:\n${topic}\n\nUsers:\n${users.join(', ')}`)
+                DCsendMessage(chat, 
+                    `Joined group '${channelID} on freenode'${topic?`\nTopic:\n${topic}`:''}${users && users.length > 0?`\n\nUsers:\n${users.join(', ')}`:''}`
+                )
             }
         } else if (message.getText().match(nickRegex)) {
             const newNick = nickRegex.exec(message.getText())[1]
@@ -97,8 +99,9 @@ dc.on('DC_EVENT_MSGS_CHANGED', (chatId, msgId) => {
 
 dc.on('DC_EVENT_INCOMING_MSG', handleDCMessage)
 
-channel.loadChannels()
-nicks.load()
+async function init(){
+    await channel.loadChannels()
+    await nicks.load()
 // Start DC and IRC client
 ircClient = new IRCClient(IRC_Connection, Object.keys(channel.channels))
 dc.open(() => {
@@ -116,5 +119,8 @@ ircClient.on('message', (type, nick, to, text, _message) => {
     const msg = `${nick}${type !== 'MSG' ? `:${type}` : ''}: ${text}`
     DCsendMessage(dc.getChat(chatId), msg)
 })
+    console.log('init done')
+}
 
-//TODO wait for config load to finish otherwise it might gets lost/overwritten
+
+init()
