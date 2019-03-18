@@ -42,6 +42,7 @@ const handleDCMessage = (chatId, msgId) => {
         const joinRegex = /\/join ([#&][^\x07\x2C\s]{0,199})/
         const nickRegex = /\/nick (.{3,30})/
         const namesRegex = /\/names ([#&][^\x07\x2C\s]{0,199})/
+        const topicRegex = /\/topic ([#&][^\x07\x2C\s]{0,199})/
         if (message.getText().match(joinRegex)) {
             const channelID = joinRegex.exec(message.getText())[1]
             var groupId = channel.getDCGroup(channelID)
@@ -55,7 +56,9 @@ const handleDCMessage = (chatId, msgId) => {
             }
             if (!dc.isContactInChat(groupId, sender.getId())) {
                 dc.addContactToChat(groupId, sender.getId())
-                DCsendMessage(chat, `Group joined - write something on the IRC channel and you should see it poping up`)
+                const users = ircClient.getOnlineUsersForChannel(channelID)
+                const topic = ircClient.getTopicForChannel(channelID)
+                DCsendMessage(chat, `Joined group '${channelID} on freenode'\nTopic:\n${topic}\n\nUsers:\n${users.join(', ')}`)
             }
         } else if (message.getText().match(nickRegex)) {
             const newNick = nickRegex.exec(message.getText())[1]
@@ -67,6 +70,10 @@ const handleDCMessage = (chatId, msgId) => {
             const channelID = namesRegex.exec(message.getText())[1]
             const users = ircClient.getOnlineUsersForChannel(channelID)
             DCsendMessage(chat, `There are currently ${users.length} users connected to ${channelID}:\n${users.join(', ')}`)
+        } else if (message.getText().match(topicRegex)) {
+            const channelID = topicRegex.exec(message.getText())[1]
+            const topic = ircClient.getTopicForChannel(channelID)
+            DCsendMessage(chat, `Topic for ${channelID}:\n${topic}`)
         } else {
             DCsendMessage(chat,
                 `Help:\n` +
