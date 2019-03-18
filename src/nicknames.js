@@ -25,6 +25,6 @@ module.exports = ()=>({
     },
     // Util
     email2Nick: function (address) {
-        return nicks.getNick(address) || address.substring(0, address.indexOf("@"))
+        return this.getNick(address) || address.substring(0, address.indexOf("@"))
     }
 })
