@@ -153,7 +153,7 @@ dc.open(path.join(__dirname,'../data/'),() => {
     if (!dc.isConfigured()) {
         dc.configure({
             addr: DC_Account.address,
-            mailPw: DC_Account.password
+            mail_pw: DC_Account.password
         })
     }
 })
