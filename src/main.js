@@ -1,6 +1,7 @@
 const DeltaChat = require('deltachat-node')
 const C = require('deltachat-node/constants')
 const dc = new DeltaChat()
+const path = require('path')
 
 // Config
 const { DC_Account, IRC_Connection } = require('../data/config.json')
@@ -104,7 +105,7 @@ async function init(){
     await nicks.load()
 // Start DC and IRC client
 ircClient = new IRCClient(IRC_Connection, Object.keys(channel.channels))
-dc.open(() => {
+dc.open(path.join(__dirname,'../data/'),() => {
     if (!dc.isConfigured()) {
         dc.configure({
             addr: DC_Account.address,
