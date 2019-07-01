@@ -15,7 +15,7 @@
   "author": "Simon Laux",
   "license": "GPL-3.0",
   "dependencies": {
-    "deltachat-node": "^1.0.0-alpha.0",
+    "deltachat-node": "git+https://github.com/deltachat/deltachat-node.git#63cd7fb0cc44030b916e6344e74ebdcfcfde8c9a",
     "irc-upd": "^0.10.0"
   }
 }
