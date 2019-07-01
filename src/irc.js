@@ -20,9 +20,11 @@ class IRCClient extends EventEmitter {
         this.client.on('names', (channel, rawUsers)=>{
             const users = Object.keys(rawUsers).map((nick)=>`${rawUsers[nick]}${nick}`) || Object.keys(rawUsers)
             this.onlineUsers[channel] = users.sort((a, b)=> a.toLowerCase().codePointAt(0) - b.toLowerCase().codePointAt(0) )
+            this.emit(`names#${channel}`, this.onlineUsers[channel])
         })
         this.client.on('topic', (channel, topic, nick, message)=>{
             this.channelTopics[channel] = `${topic}\n~set by ${nick}`
+            this.emit(`topic#${channel}`, this.channelTopics[channel])
         })
         this.client.on('registered', () => {
             this.client.connect();

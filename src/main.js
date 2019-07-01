@@ -62,6 +62,12 @@ const handleDCMessage = (chatId, msgId) => {
                 DCsendMessage(chat, 
                     `Joined group '${channelID} on freenode'${topic?`\nTopic:\n${topic}`:''}${users && users.length > 0?`\n\nUsers:\n${users.join(', ')}`:''}`
                 )
+                if(!topic){
+                    ircClient.once(`topic#${channelID}`, (topic) => DCsendMessage(chat, `${topic?`\nTopic:\n${topic}`:''}`))
+                }
+                if(!(users && users.length > 0)){
+                    ircClient.once(`names#${channelID}`, (users) => DCsendMessage(chat, `${users && users.length > 0?`\n\nUsers:\n${users.join(', ')}`:''}`))
+                }
             }
         } else if (message.getText().match(nickRegex)) {
             const newNick = nickRegex.exec(message.getText())[1]
