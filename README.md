@@ -39,4 +39,5 @@ Message the Bot and it gives you its usage/help message.
 /nick [newNick] - change your irc display name
 /names #channel - get online list of #channel
 /topic #channel - get motd/topic of #channel
+/leave #channel - leave a channel (when the group is too big to leave)
 ```

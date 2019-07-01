@@ -31,12 +31,22 @@ const tellIRCgroupMemberlistChange = (channel, email, isLeave=false) => {
 
 const LeaveGroup = function (sender, channelID){
     const chatId = channel.getDCGroup(channelID)
-
     tellIRCgroupMemberlistChange(channelID, sender.getAddress(), true)
-    // TODO Check wether I'm the last one in this group
-        // if yes - destroy dc group & leave irc channel & save that in channels file
-        // see https://github.com/Simon-Laux/deltachat-irc-bridge/issues/4
 }
+
+dc.on('DC_EVENT_CHAT_MODIFIED', (chatId)=>{
+    if(!dc.isContactInChat(chatId, C.DC_CONTACT_ID_SELF)) return;
+    const chat = dc.getChat(chatId)
+    if( dc.getChatContacts(chatId).length === 1){
+        const channelID = channel.getIRCChannel(chatId)
+        console.log(`Last member left group: ${chatId} ${channelID}`)
+        
+        channel.removeChannel(channelID)
+        ircClient.leaveChannel(channelID)
+        dc.deleteChat(chatId)
+        console.log(`Group removed`)
+}
+})
 
 const handleDCMessage = (chatId, msgId) => {
     const chat = dc.getChat(chatId)

@@ -24,6 +24,10 @@ module.exports = () => ({
         this.channels[ircChannelID] = dcGroupID
         this.saveChannels()
     },
+    removeChannel: function(ircChannelID) {
+        this.channels[ircChannelID] = undefined
+        this.saveChannels()
+    },
     getIRCChannel: function (dcGroupID) {
         return Object.keys(this.channels).find(ircChannelID => this.channels[ircChannelID] === dcGroupID);
     },

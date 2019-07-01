@@ -40,6 +40,10 @@ class IRCClient extends EventEmitter {
         })
     }
 
+    leaveChannel(channel){
+        this.client.part(channel)
+    }
+
     attachListeners() {
         if(this.unsubscribe)this.unsubscribe()
 
