@@ -23,6 +23,21 @@ function DCsendMessage(chat, text) {
 
 //dc.on('ALL', console.log.bind(null,'core |'))
 
+const tellIRCgroupMemberlistChange = (channel, email, isLeave=false) => {
+    //TODO make this an option in the config (if false return)
+    const name = nicks.email2Nick(email)
+    ircClient.sendMessage(channel, `${name}[dc] ${isLeave?'left':'joined'} the room`)
+}
+
+const LeaveGroup = function (sender, channelID){
+    const chatId = channel.getDCGroup(channelID)
+
+    tellIRCgroupMemberlistChange(channelID, sender.getAddress(), true)
+    // TODO Check wether I'm the last one in this group
+        // if yes - destroy dc group & leave irc channel & save that in channels file
+        // see https://github.com/Simon-Laux/deltachat-irc-bridge/issues/4
+}
+
 const handleDCMessage = (chatId, msgId) => {
     const chat = dc.getChat(chatId)
     const message = dc.getMessage(msgId)
@@ -44,6 +59,7 @@ const handleDCMessage = (chatId, msgId) => {
         const nickRegex = /\/nick (.{3,30})/
         const namesRegex = /\/names ([#&][^\x07\x2C\s]{0,199})/
         const topicRegex = /\/topic ([#&][^\x07\x2C\s]{0,199})/
+        const LeaveRegex = /\/leave ([#&][^\x07\x2C\s]{0,199})/
         if (message.getText().match(joinRegex)) {
             const channelID = joinRegex.exec(message.getText())[1]
             var groupId = channel.getDCGroup(channelID)
@@ -68,6 +84,7 @@ const handleDCMessage = (chatId, msgId) => {
                 if(!(users && users.length > 0)){
                     ircClient.once(`names#${channelID}`, (users) => DCsendMessage(chat, `${users && users.length > 0?`\n\nUsers:\n${users.join(', ')}`:''}`))
                 }
+                tellIRCgroupMemberlistChange(channelID, sender.getAddress(), false)
             }
         } else if (message.getText().match(nickRegex)) {
             const newNick = nickRegex.exec(message.getText())[1]
@@ -83,6 +100,17 @@ const handleDCMessage = (chatId, msgId) => {
             const channelID = topicRegex.exec(message.getText())[1]
             const topic = ircClient.getTopicForChannel(channelID)
             DCsendMessage(chat, `Topic for ${channelID}:\n${topic}`)
+        } else if (message.getText().match(LeaveRegex)) {
+            const channelID = LeaveRegex.exec(message.getText())[1]
+            const channelChatId = channel.getDCGroup(channelID)
+            if(dc.isContactInChat(channelChatId, sender.getId())){
+                dc.removeContactFromChat(channelChatId, sender.getId())
+                LeaveGroup(sender, channelID)
+                DCsendMessage(chat, `Left ${channelID}, type '/join ${channelID}' to rejoin`)
+            } else {
+                DCsendMessage(chat, `Can't leave a channel you're not in (${channelID})`)
+            }
+            
         } else {
             DCsendMessage(chat,
                 `Help:\n` +
