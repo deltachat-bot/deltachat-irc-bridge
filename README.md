@@ -26,7 +26,12 @@ data/config.json
 
 3. run `npm run start` to start it.
 
+## Uploading files with Firefox send
 
+Install ffsend https://github.com/timvisee/ffsend#linux-all-distributions and add firefox send credentials to a new ffsend.json file:
+```
+
+```
 
 ## Using the Bot
 
