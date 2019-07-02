@@ -26,7 +26,7 @@ function DCsendMessage(chat, text) {
 const tellIRCgroupMemberlistChange = (channel, email, isLeave=false) => {
     //TODO make this an option in the config (if false return)
     const name = nicks.email2Nick(email)
-    ircClient.sendMessage(channel, `${name}[dc] ${isLeave?'left':'joined'} the room`)
+    ircClient.sendAction(channel, `${name}[dc] ${isLeave?'left':'joined'} the room`)
 }
 
 const LeaveGroup = function (sender, channelID){

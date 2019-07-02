@@ -67,6 +67,12 @@ class IRCClient extends EventEmitter {
     sendMessage(channel, text) {
         this.client.say(channel, text)
     }
+    /**
+     * What /me is in most irc clients
+     */
+    sendAction(channel, text){
+        this.client.action(channel, text)
+    }
 
     getOnlineUsersForChannel(channel){
         return this.onlineUsers[channel]
