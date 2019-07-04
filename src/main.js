@@ -2,6 +2,7 @@ const DeltaChat = require('deltachat-node')
 const C = require('deltachat-node/constants')
 const dc = new DeltaChat()
 const path = require('path')
+const { fileSave } = require('./file')
 
 // Config
 const { DC_Account, IRC_Connection } = require('../data/config.json')
@@ -59,6 +60,12 @@ const handleDCMessage = (chatId, msgId) => {
         const groupid = channel.getIRCChannel(message.getChatId())
         if (!groupid) { return }
         ircClient.sendMessage(groupid, `${name}[dc]: ${message.getText()}`)
+
+        if(message.getFile() !== undefined){
+            fileSave(message.getFile(), message.getFilename()).then((link)=>{
+                ircClient.sendAction(groupid, `${name}[dc] sent file ${link}`)
+            })
+        }
 
     } else if (chat.getType() === C.DC_CHAT_TYPE_VERIFIED_GROUP) {
         // send warning

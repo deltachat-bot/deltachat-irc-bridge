@@ -16,6 +16,8 @@
   "license": "GPL-3.0",
   "dependencies": {
     "deltachat-node": "git+https://github.com/deltachat/deltachat-node.git#3592a4a826bed8d8119fd1fe354020e3f7761918",
-    "irc-upd": "^0.10.0"
+    "fs-extra": "^8.1.0",
+    "irc-upd": "^0.10.0",
+    "uuid": "^3.3.2"
   }
 }

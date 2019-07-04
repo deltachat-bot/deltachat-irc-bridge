@@ -3,6 +3,7 @@ db.sqlite-blobs
 data/channels.json
 data/nicknames.json
 data/config.json
+temp
 
 channels.json
 db.sqlite
