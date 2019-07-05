@@ -1,9 +1,10 @@
 const fs = require('fs-extra')
 const path = require('path')
 const uuidv1 = require('uuid/v1')
+{fileEndpointURL } require('../data/config.json')
 
 const dest = path.join(__dirname, '../temp')
-const url = "https://ircbot.simonlaux.de" 
+const url = fileEndpointURL
 
 async function fileSave(filepath, filename) {
     const uuid = uuidv1()

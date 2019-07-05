@@ -19,14 +19,16 @@ data/config.json
         "nick": "[nickname]",
         "password": "[password]",
         "secure": true
-    }
+    },
+    "fileEndpointURL": "[url on which the file folder is served]"
 }
 ```
 2. run `npm i` to install the dependencies. If `deltachat-node` makes any problems, follow the steps at https://github.com/deltachat/deltachat-node#troubleshooting
 
 3. run `npm run start` to start it.
 
-
+### Fileserver setup:
+serve the temp folder at the "fileEndpointURL"
 
 ## Using the Bot
 
