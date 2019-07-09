@@ -1,7 +1,7 @@
 const fs = require('fs-extra')
 const path = require('path')
 const uuidv1 = require('uuid/v1')
-{fileEndpointURL } require('../data/config.json')
+const { fileEndpointURL } = require('../data/config.json')
 
 const dest = path.join(__dirname, '../temp')
 const url = fileEndpointURL

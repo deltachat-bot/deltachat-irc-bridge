@@ -20,7 +20,8 @@ data/config.json
         "password": "[password]",
         "secure": true
     },
-    "fileEndpointURL": "[url on which the file folder is served]"
+    "fileEndpointURL": "[url on which the file folder is served]",
+    "fileUploadNeedsVerifiedUser": true
 }
 ```
 2. run `npm i` to install the dependencies. If `deltachat-node` makes any problems, follow the steps at https://github.com/deltachat/deltachat-node#troubleshooting

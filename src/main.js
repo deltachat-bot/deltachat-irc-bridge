@@ -5,7 +5,7 @@ const path = require('path')
 const { fileSave } = require('./file')
 
 // Config
-const { DC_Account, IRC_Connection } = require('../data/config.json')
+const { DC_Account, IRC_Connection, fileUploadNeedsVerifiedUser } = require('../data/config.json')
 // ======
 
 // Channel & nickname storage/managers
@@ -62,9 +62,13 @@ const handleDCMessage = (chatId, msgId) => {
         ircClient.sendMessage(groupid, `${name}[dc]: ${message.getText()}`)
 
         if(message.getFile() !== undefined){
+            if(fileUploadNeedsVerifiedUser && !sender.isVerified() ){
+                ircClient.sendAction(groupid, `${name}[dc] sent file, but this user isn't verified by the bot`)
+            } else {
             fileSave(message.getFile(), message.getFilename()).then((link)=>{
                 ircClient.sendAction(groupid, `${name}[dc] sent file ${link}`)
             })
+        }
         }
 
     } else {
@@ -160,6 +164,9 @@ dc.open(path.join(__dirname,'../data/'),() => {
             mail_pw: DC_Account.password
         })
     }
+    const qrcode = require('qrcode-terminal')
+    console.log("use this qr code to verify yourself with the bot:")
+    qrcode.generate(dc.getSecurejoinQrCode(0), {small: true});
 })
 
 ircClient.on('message', (type, nick, to, text, _message) => {
