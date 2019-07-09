@@ -54,7 +54,7 @@ const handleDCMessage = (chatId, msgId) => {
     const message = dc.getMessage(msgId)
     if (!message || message.isInfo()) return;
     const sender = dc.getContact(message.getFromId())
-    if (chat.getType() === C.DC_CHAT_TYPE_GROUP) {
+    if (chat.getType() === C.DC_CHAT_TYPE_GROUP || chat.getType() === C.DC_CHAT_TYPE_VERIFIED_GROUP) {
         const name = nicks.email2Nick(sender.getAddress())
         /* irc once ready send msg */
         const groupid = channel.getIRCChannel(message.getChatId())
@@ -67,9 +67,6 @@ const handleDCMessage = (chatId, msgId) => {
             })
         }
 
-    } else if (chat.getType() === C.DC_CHAT_TYPE_VERIFIED_GROUP) {
-        // send warning
-        DCsendMessage(chat, 'Bridging to IRC compromises the security of your verfied group, please remove this bot from the group!')
     } else {
         // listen to join command
         const joinRegex = /\/join ([#&][^\x07\x2C\s]{0,199})/
