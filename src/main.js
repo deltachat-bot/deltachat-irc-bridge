@@ -61,7 +61,7 @@ const handleDCMessage = (chatId, msgId) => {
         if (!groupid) { return }
         ircClient.sendMessage(groupid, `${name}[dc]: ${message.getText()}`)
 
-        if(message.getFile() !== undefined){
+        if(message.getFile() !== undefined && message.getFile().length > 0){
             if(fileUploadNeedsVerifiedUser && !sender.isVerified() ){
                 ircClient.sendAction(groupid, `${name}[dc] sent file, but this user isn't verified by the bot`)
             } else {
