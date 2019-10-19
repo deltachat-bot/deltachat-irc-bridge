@@ -21,7 +21,7 @@ function DCsendMessage(chat, text) {
     dc.sendMessage(chat.getId(), text)
 }
 
-//dc.on('ALL', console.log.bind(null,'core |'))
+dc.on('ALL', console.log.bind(null,`${ (new Date()).toUTCString()} | core |`))
 
 const tellIRCgroupMemberlistChange = (channel, email, isLeave=false) => {
     //TODO make this an option in the config (if false return)
